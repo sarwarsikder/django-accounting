@@ -1,0 +1,66 @@
+<!-- inventory_transaction_create.html -->
+{% extends 'base.html' %}
+
+{% block title %}{% if instance %}Edit{% else %}Create{% endif %} Inventory Transaction - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Inventory Transactions ({{ context.type_of_transaction }})</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Inventory Transactions</li>
+                    <li class="breadcrumb-item active">{% if instance %}Edit{% else %}Create{% endif %}</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{% if instance %}Edit{% else %}Create{% endif %} Inventory
+                                Transaction</h5>
+
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+
+                                <button class="btn btn-primary" type="submit">Save</button>
+                                <a href="{% url 'inventory-transaction-list' context.type_of_transaction %}" class="btn btn-success bx-pull-right">Back
+                                    to List</a>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <!-- Include any additional scripts or styles if needed -->
+    <!-- Include jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Include Bootstrap Datepicker CSS from CDN -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+    <!-- Include Bootstrap Datepicker JS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+    <!-- Initialize the datepicker -->
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+            });
+        });
+    </script>
+{% endblock %}

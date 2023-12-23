@@ -1,0 +1,108 @@
+<!-- inventory_transaction_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}Inventory Transactions List - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Inventory Transactions</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Inventory Transactions</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% if context.type_of_transaction == 'inventory-purchase' %}
+                                    <!-- Content to display for Inventory Purchase -->
+                                    Inventory Purchase
+                                {% elif context.type_of_transaction == 'inventory-use' %}
+                                    <!-- Content to display for Inventory Use -->
+                                    Inventory Use
+                                {% elif context.type_of_transaction == 'return-to-inventory' %}
+                                    <!-- Content to display for Return to Inventory -->
+                                    Return To Inventory
+                                {% elif context.type_of_transaction == 'return-to-supplier' %}
+                                    <!-- Content to display for Return to Supplier -->
+                                    Return To Supplier
+                                {% else %}
+                                    <p></p>
+                                {% endif %}
+
+                            </h5>
+
+                            <!-- Add Create button at the top right -->
+                            <div class="text-start mb-3">
+                                <a class="btn btn-success"
+                                   href="{% url 'inventory-transaction-create' context.type_of_transaction %}">Create
+                                    Inventory Transaction</a>
+                            </div>
+
+                            <table class="display table datatable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Document ID</th>
+                                    <th>Inventory</th>
+                                    <th>Customer</th>
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                    <th>Total Price</th>
+                                    <th>Discount</th>
+                                    <th>Expense Type</th>
+                                    <th>Vehicle</th>
+                                    <th>Note</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for transaction in context.transactions %}
+                                    <tr>
+                                        <td>{{ transaction.inv_transID }}</td>
+                                        <td>{{ transaction.doc_id }}</td>
+                                        <td>{{ transaction.inventory }}</td>
+                                        <td>{{ transaction.customer }}</td>
+                                        <td>{{ transaction.unit }}</td>
+                                        <td>{{ transaction.price }}</td>
+                                        <td>{{ transaction.total_price }}</td>
+                                        <td>{{ transaction.discount }}</td>
+                                        <td>{{ transaction.expense_type }}</td>
+                                        <td>{{ transaction.vehicle }}</td>
+                                        <td>{{ transaction.note }}</td>
+                                        <td>{{ transaction.status }}</td>
+                                        <td>{{ transaction.date }}</td>
+                                        <td>
+                                            <!-- Add links or buttons for actions -->
+                                            <a class="btn btn-primary"
+                                               href="{% url 'inventory-transaction-update' transaction.inv_transID context.type_of_transaction %}">Edit</a>
+                                            |
+                                            <a class="btn btn-danger"
+                                               href="{% url 'inventory-transaction-delete' transaction.inv_transID %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock %}

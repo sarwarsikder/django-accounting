@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventory - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Inventory Data</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Inventory</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Inventory</h5>
+
+                            <div class="text-start mb-3">
+                                <a class="btn btn-success" href="{% url 'inventory-create' %}">Create Inventory</a>
+                            </div>
+
+                            <table id="inventory-list" class="display table datatable">
+                                <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Item Name</th>
+                                    <th scope="col">Account</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Measure</th>
+                                    <th scope="col">Average Price</th>
+                                    <th scope="col">Detail</th>
+                                    <th scope="col">Note</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in context.inventory_list %}
+                                    <tr>
+                                        <th scope="row">{{ item.inventoryID }}</th>
+                                        <td>{{ item.inventory_item_name }}</td>
+                                        <td>{{ item.account }}</td>
+                                        <td>{{ item.inventory_type }}</td>
+                                        <td>{{ item.measure }}</td>
+                                        <td>{{ item.avg_price }}</td>
+                                        <td>{{ item.detail }}</td>
+                                        <td>{{ item.note }}</td>
+                                        <td>
+                                            <!-- Edit button (link to your edit view) -->
+                                            <a class="btn btn-primary"
+                                               href="{% url 'inventory-edit' item.inventoryID %}">Edit</a> |
+
+                                            <!-- Delete button (link to your delete view) -->
+                                            <a class="btn btn-danger"
+                                               href="{% url 'inventory-delete' item.inventoryID %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock %}

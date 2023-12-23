@@ -1,0 +1,76 @@
+<!-- edit_account.html -->
+{% extends 'base.html' %}
+
+{% block title %}Edit Account - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Edit Account</h1>
+            <!-- Other breadcrumbs or navigation -->
+        </div>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Edit Accounting</h5>
+
+                            <form method="post" enctype="multipart/form-data">
+
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </form>
+                            <a href="{% url 'account-list' %}" class="btn btn-success bx-pull-right">Back to
+                                List</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Function to load options for AccountLevel2 based on selected AccountLevel1
+            $('#id_level1ID').change(function () {
+                var level1ID = $(this).val();
+                $.ajax({
+                    url: '{% url "get_account_level2_options" %}',  // Update the URL to match your Django view
+                    data: {'level1ID': level1ID},
+                    dataType: 'json',
+                    success: function (data) {
+                        var level2Dropdown = $('#id_level2ID');
+                        level2Dropdown.empty();
+                        level2Dropdown.append($('<option></option>').attr('value', '').text('..........'));
+                        $.each(data, function (key, value) {
+                            level2Dropdown.append($('<option></option>').attr('value', value.level2ID).text(value.name));
+                        });
+                        $('#id_level3').empty();  // Clear AccountLevel3 options when AccountLevel2 changes
+                    }
+                });
+            });
+
+            // Function to load options for AccountLevel3 based on selected AccountLevel2
+            $('#id_level2ID').change(function () {
+                var level2ID = $(this).val();
+                $.ajax({
+                    url: '{% url "get_account_level3_options" %}',  // Update the URL to match your Django view
+                    data: {'level2ID': level2ID},
+                    dataType: 'json',
+                    success: function (data) {
+                        var level3Dropdown = $('#id_level3ID');
+                        level3Dropdown.empty();
+                        level3Dropdown.append($('<option></option>').attr('value', '').text('..........'));
+
+                        $.each(data, function (key, value) {
+                            level3Dropdown.append($('<option></option>').attr('value', value.level3ID).text(value.name));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

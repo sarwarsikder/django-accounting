@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Account List - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Account List</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Account</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"></h5>
+
+                            <!-- Add Create button at the top right -->
+                            <div class="text-start mb-3">
+                                <a class="btn btn-success" href="{% url 'account-create' %}">Create Account</a>
+                            </div>
+
+                            <table class="display table datatable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Account Level 1</th>
+                                    <th>Account Level 2</th>
+                                    <th>Account Level 3</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for account in context.accounts %}
+                                    <tr>
+                                        <td>{{ account.accountID }}</td>
+                                        <td>{{ account.name }}</td>
+                                        <td>{{ account.level3ID.level2ID.level1ID.name }}</td>
+                                        <td>{{ account.level3ID.level2ID.name }}</td>
+                                        <td>{{ account.level3ID.name }}</td>
+                                        <td>
+                                            <!-- Add links or buttons for actions -->
+                                            <a class="btn btn-primary"
+                                               href="{% url 'edit-account' account.accountID %}">Edit</a> |
+                                            <a class="btn btn-danger"
+                                               href="{% url 'delete-account' account.accountID %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock %}

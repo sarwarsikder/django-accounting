@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Fixed Assets List - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Fixed Assets</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Fixed Assets</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"></h5>
+
+                            <!-- Add Create button at the top right -->
+                            <div class="text-start mb-3">
+                                <a class="btn btn-success" href="{% url 'create-asset' %}">Create Fixed Asset</a>
+                            </div>
+
+                            <table class="display table datatable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Account</th>
+                                    <th>depreciation Category</th>
+                                    <th>Type</th>
+                                    <th>Brand</th>
+                                    <th>Price</th>
+                                    <th>Purchase Month</th>
+                                    <th>Depreciation</th>
+                                    <th>Identification</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for asset in context.fixed_assets %}
+                                    <tr>
+                                        <td>{{ asset.depreciation_id }}</td>
+                                        <td>{{ asset.name }}</td>
+                                        <td>{{ asset.account }}</td>
+                                        <td>{{ asset.accu_id }}</td>
+                                        <td>{{ asset.type }}</td>
+                                        <td>{{ asset.brand }}</td>
+                                        <td>{{ asset.price }}</td>
+                                        <td>{{ asset.purchase_month }}</td>
+                                        <td>{{ asset.depreciation }}</td>
+                                        <td>{{ asset.identification }}</td>
+                                        <td>
+                                            <!-- Add links or buttons for actions -->
+                                            <a class="btn btn-primary"
+                                               href="{% url 'update-asset' asset.depreciation_id %}">Edit</a> |
+                                            <a class="btn btn-danger"
+                                               href="{% url 'delete-asset' asset.depreciation_id %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock %}

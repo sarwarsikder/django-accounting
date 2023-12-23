@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Transaction List - Your Site{% endblock %}
+
+{% block content %}
+    <main id="main" class="main">
+
+        <div class="pagetitle">
+            <h1>Transactions</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                    <li class="breadcrumb-item">Transactions</li>
+                    <li class="breadcrumb-item active">List</li>
+                </ol>
+            </nav>
+        </div><!-- End Page Title -->
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"></h5>
+
+                            <!-- Add Create button at the top right -->
+                            <div class="text-start mb-3">
+                                <a class="btn btn-success" href="{% url 'create-transaction' %}">Create Transaction</a>
+                            </div>
+
+                            <table class="display table datatable">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Document</th>
+                                    <th>Account</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for transaction in context.transactions %}
+                                    <tr>
+                                        <td>{{ transaction.transaction_id }}</td>
+                                        <td>{{ transaction.doc_id }}</td>
+                                        <td>{{ transaction.account }}</td>
+                                        <td>{{ transaction.customer }}</td>
+                                        <td>{{ transaction.date }}</td>
+                                        <td>{{ transaction.debit }}</td>
+                                        <td>{{ transaction.credit }}</td>
+                                        <td>{{ transaction.notes }}</td>
+                                        <td>
+                                            <!-- Add links or buttons for actions -->
+                                            <a class="btn btn-primary"
+                                               href="{% url 'update-transaction' transaction.transaction_id %}">Edit</a> |
+                                            <a class="btn btn-danger"
+                                               href="{% url 'delete-transaction' transaction.transaction_id %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock %}
