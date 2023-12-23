@@ -24,7 +24,8 @@ SECRET_KEY = 'django-insecure-w&pnb92p6&s(@i7rqvek-3g#6ggiikay_lae@07a9*2rbe0ine
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'django-accounting.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['django-accounting.azurewebsites.net', 'http://127.0.0.1:8000']
 
 # Application definition
 
