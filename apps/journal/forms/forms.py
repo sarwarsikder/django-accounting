@@ -1,8 +1,21 @@
 from django import forms
 
 from apps.accounts.models import Account
-from apps.journal.models import Transaction
+from apps.journal.models import Transaction, Document
 from apps.persons.models import Person
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['name', 'notes', 'date']
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentForm, self).__init__(*args, **kwargs)
+        # You can customize the form fields if needed
+        self.fields['date'].widget.attrs.update({'class': 'datepicker form-control', 'placeholder': 'Select a date'})
+        self.fields['notes'].widget.attrs.update({'class': 'form-control', 'rows': '3', 'placeholder': 'Enter notes'})
+        self.fields['name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter name'})
 
 
 class TransactionForm(forms.ModelForm):

@@ -22,15 +22,32 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Create Transaction</h5>
+                            <h5 class="card-title">Create Journal</h5>
 
-                            <form method="post" action="{% url 'create-transaction' %}">
+                            <form method="post" action="{% url 'create-transaction' %}" id="array_form">
                                 {% csrf_token %}
                                 {{ form.as_p }}
 
-                                <button class="btn btn-primary" type="submit">Save</button>
-                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to
-                                    List</a>
+                                <hr>
+
+                                <table id="dynamic-table" class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Customer</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!-- Existing rows, if any -->
+                                    </tbody>
+                                </table>
+
+                                <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button>
+                                <button type="submit" class="btn btn-success">Submit</button>
                             </form>
 
                         </div>
@@ -58,6 +75,94 @@
                 format: 'yyyy-mm-dd',
                 autoclose: true,
             });
+            addRow();
         });
+
+        function addRow() {
+            var table = document.getElementById("dynamic-table").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+
+            // Add cells
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+            var cell5 = newRow.insertCell(4);
+            var cell6 = newRow.insertCell(5);
+
+            // Create select elements for dropdowns
+            var select1 = document.createElement("select");
+            var select2 = document.createElement("select");
+            var input3 = document.createElement("input");
+            var input4 = document.createElement("input");
+            var input5 = document.createElement("input");
+
+            // Set attributes for select elements
+            select1.className = "form-control";
+            select2.className = "form-control";
+            input3.className = "form-control";
+            input4.className = "form-control";
+            input5.className = "form-control";
+
+            // Set additional attributes for required fields
+            input3.required = true;
+            input4.required = true;
+            input5.required = true;
+            // Set name attributes for form submission
+            select1.name = "account[]";
+            select2.name = "customer[]";
+            input3.name = "debit[]";
+            input4.name = "credit[]";
+            input5.name = "description[]";
+
+
+            var accountOptions = JSON.parse('{{ context.accounts|safe }}');
+            var customerOptions = JSON.parse('{{ context.customers|safe }}');
+
+            console.log(accountOptions)
+            console.log(customerOptions)
+
+            for (var i = 0; i < accountOptions.length; i++) {
+                var option = document.createElement("option");
+                option.value = accountOptions[i].id;
+                option.text = accountOptions[i].name;
+                select1.appendChild(option);
+            }
+
+            for (var j = 0; j < customerOptions.length; j++) {
+                var option = document.createElement("option");
+                option.value = customerOptions[j].id;
+                option.text = customerOptions[j].name;
+                select2.appendChild(option);
+            }
+
+            // Add the oninput event to the debit field
+            input3.oninput = function () {
+                input4.value = 0; // Set credit to 0 when debit is entered
+            };
+
+            input4.oninput = function () {
+                input3.value = 0; // Set debit to 0 when credit is entered
+            };
+
+            // Append elements to cells
+            cell1.appendChild(select1);
+            cell2.appendChild(select2);
+            cell3.appendChild(input3);
+            cell4.appendChild(input4);
+            cell5.appendChild(input5);
+
+            // Add a delete button
+            var deleteButton = document.createElement("button");
+            deleteButton.innerHTML = "Delete";
+            deleteButton.type = "button";
+            deleteButton.className = "btn btn-danger";
+            deleteButton.onclick = function () {
+                var row = this.closest('tr'); // Get the parent row
+                row.parentNode.removeChild(row); // Remove the row
+            };
+            cell6.appendChild(deleteButton);
+        }
     </script>
+
 {% endblock %}
