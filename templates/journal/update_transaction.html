@@ -45,30 +45,33 @@
                                         <tr>
                                             <td>
                                                 <select name="account[]" class="form-control">
+                                                    <option value=""> Select a Customer</option>
+
                                                     {% for account in context.accounts_selects %}
                                                         <option value="{{ account.accountID }}"
-                                                                {% if account.accountID == item.account.id %}selected{% endif %}>{{ account.name }}</option>
+                                                                {% if account.accountID == item.account.accountID %}selected{% endif %}>{{ account.name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </td>
                                             <td>
-                                                {% if item.customer.id in context.customers_selects %}
+                                                {% if item.customer in context.customers_selects %}
                                                     <!-- Render select for customers -->
                                                     <select name="customer[]" class="form-control">
+                                                        <option value=""> Select a supplier</option>
                                                         {% for customer in context.customers_selects %}
                                                             <option value="{{ customer.personsID }}"
-                                                                    {% if customer.personsID == item.customer.id %}selected{% endif %}>
-                                                                {{ customer.name }}
+                                                                    {% if customer.personsID == item.customer.personsID %}selected{% endif %}>
+                                                                {{ customer.persons_name }}
                                                             </option>
                                                         {% endfor %}
                                                     </select>
-                                                {% elif item.account.id in context.suppliers_selects %}
+                                                {% elif item.customer in context.suppliers_selects %}
                                                     <!-- Render select for suppliers -->
                                                     <select name="customer[]" class="form-control">
-                                                        {% for customer in context.suppliers_selects %}
-                                                            <option value="{{ customer.personsID }}"
-                                                                    {% if customer.personsID == item.customer.id %}selected{% endif %}>
-                                                                {{ customer.name }}
+                                                        {% for supplier in context.suppliers_selects %}
+                                                            <option value="{{ supplier.personsID }}"
+                                                                    {% if supplier.personsID == item.customer.id %}selected{% endif %}>
+                                                                {{ supplier.persons_name }}
                                                             </option>
                                                         {% endfor %}
                                                     </select>
@@ -98,7 +101,8 @@
 
                                 <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button>
                                 <button type="submit" class="btn btn-success">Update</button>
-                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to List</a>
+                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to
+                                    List</a>
 
                             </form>
                         </div>

@@ -183,6 +183,7 @@ def update_transaction(request, doc_id):
         'document': document,  # Note the plural form
     }
 
+
     if request.method == 'POST':
 
         account_list = request.POST.getlist('account[]')
