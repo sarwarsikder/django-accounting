@@ -12,7 +12,7 @@ from apps.company.models import Company, CompanyBranch
 
 class AccountLevel1(models.Model):
     # level1ID = models.IntegerField(primary_key=True, choices=[(i, str(i)) for i in range(10)])
-    level1ID = models.AutoField(primary_key=True)
+    level1ID = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -21,7 +21,7 @@ class AccountLevel1(models.Model):
 
 class AccountLevel2(models.Model):
     # level2ID = models.IntegerField(primary_key=True)
-    level2ID = models.AutoField(primary_key=True)
+    level2ID = models.IntegerField(primary_key=True)
     level1ID = models.ForeignKey(AccountLevel1, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
@@ -31,7 +31,7 @@ class AccountLevel2(models.Model):
 
 class AccountLevel3(models.Model):
     # level3ID = models.IntegerField(primary_key=True, choices=[(i, str(i)) for i in range(10)])
-    level3ID = models.AutoField(primary_key=True)
+    level3ID = models.IntegerField(primary_key=True)
     level2ID = models.ForeignKey(AccountLevel2, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
@@ -41,10 +41,11 @@ class AccountLevel3(models.Model):
 
 class Account(models.Model):
     # accountID = models.IntegerField(primary_key=True, choices=[(i, str(i)) for i in range(1000)])
-    accountID = models.AutoField(primary_key=True)
+    accountID = models.CharField(primary_key=True, max_length=10)
     level3ID = models.ForeignKey(AccountLevel3, on_delete=models.CASCADE, null=True, default=None)
     level2ID = models.ForeignKey(AccountLevel2, on_delete=models.CASCADE, null=True, default=None)
     level1ID = models.ForeignKey(AccountLevel1, on_delete=models.CASCADE, null=True, default=None)
+    account_code = models.CharField(max_length=3, null=True)
     name = models.CharField(max_length=255)
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, default=None, related_name='created_accounts')
     company_branch = models.ForeignKey(CompanyBranch, on_delete=models.CASCADE, default=None,

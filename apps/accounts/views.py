@@ -50,6 +50,7 @@ def account_create(request):
         if form.is_valid():
             user = request.user
             account = form.save(commit=False)
+            account.accountID = str(request.POST['level3']) + str(form.cleaned_data['account_code'])
             account.company_id = user.company
             account.company_branch = user.company_branch
             account.created_by = user
@@ -79,6 +80,7 @@ def edit_account(request, account_id):
     if request.method == 'POST':
         form = AccountFormEdit(request.POST, instance=account)
         if form.is_valid():
+            print(request.POST['level3ID'])
             user = request.user
             account = form.save(commit=False)
             account.company_id = user.company

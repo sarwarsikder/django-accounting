@@ -7,7 +7,7 @@ from ..models import AccountLevel1, AccountLevel2, AccountLevel3, Account
 class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
-        fields = ['level1', 'level2', 'level3', 'name']
+        fields = ['level1', 'level2', 'level3', 'name', 'account_code']
 
     level1 = forms.ModelChoiceField(
         queryset=AccountLevel1.objects.all(),
@@ -56,7 +56,7 @@ class AccountForm(forms.ModelForm):
 class AccountFormEdit(forms.ModelForm):
     class Meta:
         model = Account
-        fields = ['level1ID', 'level2ID', 'level3ID', 'name']
+        fields = ['level1ID', 'level2ID', 'level3ID', 'name', 'account_code']
 
     def __init__(self, *args, **kwargs):
         super(AccountFormEdit, self).__init__(*args, **kwargs)
@@ -87,5 +87,3 @@ class AccountFormEdit(forms.ModelForm):
         # Additional validation if needed
 
         return cleaned_data
-
-
