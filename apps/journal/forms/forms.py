@@ -8,14 +8,18 @@ from apps.persons.models import Person
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ['name', 'notes', 'date']
+        fields = ['date', 'name', 'notes']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user_company_id, user_company_branch, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
         # You can customize the form fields if needed
         self.fields['date'].widget.attrs.update({'class': 'datepicker form-control', 'placeholder': 'Select a date'})
         self.fields['notes'].widget.attrs.update({'class': 'form-control', 'rows': '3', 'placeholder': 'Enter notes'})
         self.fields['name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter name'})
+
+        # Make 'notes' and 'other_field' not required
+        self.fields['notes'].required = False
+        self.fields['name'].required = False
 
 
 class TransactionForm(forms.ModelForm):

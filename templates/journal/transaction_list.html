@@ -33,33 +33,25 @@
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Document</th>
-                                    <th>Account</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Debit</th>
-                                    <th>Credit</th>
+                                    <th>Name</th>
                                     <th>Notes</th>
+                                    <th>Date</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for transaction in context.transactions %}
+                                {% for document in context.documents %}
                                     <tr>
-                                        <td>{{ transaction.transaction_id }}</td>
-                                        <td>{{ transaction.doc_id }}</td>
-                                        <td>{{ transaction.account }}</td>
-                                        <td>{{ transaction.customer }}</td>
-                                        <td>{{ transaction.date }}</td>
-                                        <td>{{ transaction.debit }}</td>
-                                        <td>{{ transaction.credit }}</td>
-                                        <td>{{ transaction.notes }}</td>
+                                        <td>{{ document.doc_id }}</td>
+                                        <td>{{ document.name }}</td>
+                                        <td>{{ document.notes }}</td>
+                                        <td>{{ document.date }}</td>
                                         <td>
                                             <!-- Add links or buttons for actions -->
                                             <a class="btn btn-primary"
-                                               href="{% url 'update-transaction' transaction.transaction_id %}">Edit</a> |
+                                               href="{% url 'update-transaction' document.doc_id %}">Edit</a> |
                                             <a class="btn btn-danger"
-                                               href="{% url 'delete-transaction' transaction.transaction_id %}">Delete</a>
+                                               href="{% url 'delete-transaction' document.doc_id %}">Delete</a>
                                         </td>
                                     </tr>
                                 {% endfor %}

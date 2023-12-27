@@ -4,7 +4,6 @@
 
 {% block content %}
     <main id="main" class="main">
-
         <div class="pagetitle">
             <h1>Transactions</h1>
             <nav>
@@ -19,28 +18,73 @@
         <section class="section">
             <div class="row">
                 <div class="col-lg-12">
-
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Edit Transaction</h5>
 
-                            <form method="post" action="{% url 'update-transaction' transaction.transaction_id %}">
+                            <form method="post"
+                                  id="array_form">
                                 {% csrf_token %}
                                 {{ form.as_p }}
 
-                                <button class="btn btn-primary" type="submit">Save Changes</button>
-                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to
-                                    List</a>
-                            </form>
+                                <hr>
 
+                                <table id="dynamic-table" class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Customer</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
+                                        <th>Description</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in context.transactions %}
+                                        <tr>
+                                            <td>
+                                                <select name="account[]" class="form-control">
+                                                    {% for account in accounts %}
+                                                        <option value="{{ account.id }}"
+                                                                {% if account.id == item.account.id %}selected{% endif %}>{{ account.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="customer[]" class="form-control">
+                                                    {% for customer in customers %}
+                                                        <option value="{{ customer.id }}"
+                                                                {% if customer.id == item.customer.id %}selected{% endif %}>{{ customer.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td><input type="text" name="debit[]" class="form-control"
+                                                       value="{{ item.debit }}"></td>
+                                            <td><input type="text" name="credit[]" class="form-control"
+                                                       value="{{ item.credit }}"></td>
+                                            <td><input type="text" name="description[]" class="form-control"
+                                                       value="{{ item.description }}"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                                                    Remove
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button>
+                                <button type="submit" class="btn btn-success">Update</button>
+                            </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
-
     </main>
+
     <!-- Include jQuery from CDN -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -58,6 +102,80 @@
                 format: 'yyyy-mm-dd',
                 autoclose: true,
             });
+
+            addRow();
         });
+
+        function addRow() {
+            var table = document.getElementById("dynamic-table").getElementsByTagName('tbody')[0];
+            var newRow = table.insertRow(table.rows.length);
+
+            // Add cells
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+            var cell5 = newRow.insertCell(4);
+            var cell6 = newRow.insertCell(5);
+
+            // Create select elements for dropdowns
+            var select1 = document.createElement("select");
+            var select2 = document.createElement("select");
+            var input3 = document.createElement("input");
+            var input4 = document.createElement("input");
+            var input5 = document.createElement("input");
+
+            // Set attributes for select elements
+            select1.className = "form-control";
+            select2.className = "form-control";
+            input3.className = "form-control";
+            input4.className = "form-control";
+            input5.className = "form-control";
+
+            // Set additional attributes for required fields
+            input3.required = true;
+            input4.required = true;
+            input5.required = false;
+            // Set name attributes for form submission
+            select1.name = "account[]";
+            select2.name = "customer[]";
+            input3.name = "debit[]";
+            input4.name = "credit[]";
+            input5.name = "description[]";
+
+            // Add options to select elements (similar to create_transaction.html)
+
+            // Add the oninput event to the debit field
+            input3.oninput = function () {
+                input4.value = 0; // Set credit to 0 when debit is entered
+            };
+
+            input4.oninput = function () {
+                input3.value = 0; // Set debit to 0 when credit is entered
+            };
+
+            // Append elements to cells
+            cell1.appendChild(select1);
+            cell2.appendChild(select2);
+            cell3.appendChild(input3);
+            cell4.appendChild(input4);
+            cell5.appendChild(input5);
+
+            // Add a delete button
+            var deleteButton = document.createElement("button");
+            deleteButton.innerHTML = "Delete";
+            deleteButton.type = "button";
+            deleteButton.className = "btn btn-danger";
+            deleteButton.onclick = function () {
+                var row = this.closest('tr'); // Get the parent row
+                row.parentNode.removeChild(row); // Remove the row
+            };
+            cell6.appendChild(deleteButton);
+        }
+
+        function removeRow(button) {
+            var row = button.closest('tr'); // Get the parent row
+            row.parentNode.removeChild(row); // Remove the row
+        }
     </script>
 {% endblock %}

@@ -9,9 +9,9 @@ from apps.persons.models import Person
 class Document(models.Model):
     # Fields
     doc_id = models.AutoField(primary_key=True)
-    date = models.DateField()
-    notes = models.TextField()
-    name = models.CharField(null=True, blank=True, max_length=150)
+    date = models.DateField(null=False)
+    notes = models.TextField(null=True)
+    name = models.CharField(null=True, default='', max_length=150)
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     company_branch = models.ForeignKey(CompanyBranch, on_delete=models.CASCADE, null=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
@@ -20,7 +20,7 @@ class Document(models.Model):
                                    related_name='updated_docs', null=True)
 
     def __str__(self):
-        return f"{self.doc_id} - {self.name}"
+        return f"{self.doc_id}"
 
 
 class Transaction(models.Model):
