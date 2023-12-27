@@ -19,6 +19,8 @@ def transaction_list(request):
     transactions = Transaction.objects.filter(company_id=user_company_id, company_branch=user_company_branch)
     documents = Document.objects.filter(company_id=user_company_id, company_branch=user_company_branch)
 
+    print(documents)
+
     context = {
         'first_name': user.first_name,
         'last_name': user.last_name,
@@ -66,18 +68,18 @@ def create_transaction(request):
         'suppliers': json.dumps([{'id': supplier.personsID, 'name': supplier.persons_name} for supplier in suppliers]),
     }
 
-    print(request.POST)
-
     if request.method == 'POST':
         form = DocumentForm(user_company_id, user_company_branch, request.POST)
-
-        print(request.method)
 
         account_list = request.POST.getlist('account[]')
         customer_list = request.POST.getlist('customer[]')
         debit_list = request.POST.getlist('debit[]')
         credit_list = request.POST.getlist('credit[]')
         description_list = request.POST.getlist('description[]')
+        print(customer_list)
+
+        if customer_list is None:
+            customer_list = None  # Optionally set it to None again
 
         if form.is_valid():
             document = form.save(commit=False)
@@ -87,51 +89,45 @@ def create_transaction(request):
             document.updated_by = request.user
             document.save()
 
-            # Create and save Transaction objects
-            for account, customer, debit, credit, description in zip(account_list, customer_list, debit_list,
-                                                                     credit_list, description_list):
-                account = Account.objects.get(
-                    company_id=user_company_id,
-                    company_branch=user_company_branch,
-                    accountID=account
-                )
+            try:
+                for account, customer, debit, credit, description in zip(account_list, customer_list, debit_list,
+                                                                         credit_list, description_list):
+                    account = Account.objects.get(
+                        company_id=user_company_id,
+                        company_branch=user_company_branch,
+                        accountID=account
+                    )
 
-                customer = Person.objects.get(
-                    company_id=user_company_id,
-                    company_branch=user_company_branch,
-                    personsID=customer
-                )
+                    if customer:
+                        customer = Person.objects.get(
+                            company_id=user_company_id,
+                            company_branch=user_company_branch,
+                            personsID=customer
+                        )
+                    else:
+                        customer = None
 
-                Transaction.objects.create(
-                    doc_id=document,
-                    account=account,
-                    customer=customer,
-                    company_id=user_company_id,
-                    company_branch=user_company_branch,
-                    debit=debit,
-                    credit=credit,
-                    date=datetime.now(),
-                    created_by=request.user,
-                    updated_by=request.user,
-                )
+                    Transaction.objects.create(
+                        doc_id=document,
+                        account=account,
+                        customer=customer,
+                        company_id=user_company_id,
+                        company_branch=user_company_branch,
+                        debit=debit,
+                        credit=credit,
+                        date=datetime.now(),
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+            except Exception as e:
+                # Code to handle the exception
+                print(f"An error occurred: {e}")
 
             return redirect('transaction-list')
 
     else:
         form = DocumentForm(user_company_id, user_company_branch, )
 
-    # if request.method == 'POST':
-    #     form = TransactionForm(user_company_id, user_company_branch, request.POST)
-    #     if form.is_valid():
-    #         transaction = form.save(commit=False)
-    #         transaction.created_by = request.user
-    #         transaction.updated_by = request.user
-    #         transaction.company_id = user_company_id
-    #         transaction.company_branch = user_company_branch
-    #         transaction.save()
-    #         return redirect('transaction-list')
-    # else:
-    #     form = TransactionForm(user_company_id=user_company_id, user_company_branch=user_company_branch)
     return render(request, 'journal/create_transaction.html', {'form': form, 'context': context})
 
 
@@ -177,6 +173,9 @@ def update_transaction(request, doc_id):
         'last_name': user.last_name,
         'company': user_company_id,
         'company_branch': user_company_branch,
+        'accounts_selects': accounts,
+        'customers_selects': customers,
+        'suppliers_selects': suppliers,
         'accounts': json.dumps([{'id': account.accountID, 'name': account.name} for account in accounts]),
         'customers': json.dumps([{'id': customer.personsID, 'name': customer.persons_name} for customer in customers]),
         'suppliers': json.dumps([{'id': supplier.personsID, 'name': supplier.persons_name} for supplier in suppliers]),
@@ -185,39 +184,60 @@ def update_transaction(request, doc_id):
     }
 
     if request.method == 'POST':
+
+        account_list = request.POST.getlist('account[]')
+        customer_list = request.POST.getlist('customer[]')
+        debit_list = request.POST.getlist('debit[]')
+        credit_list = request.POST.getlist('credit[]')
+        description_list = request.POST.getlist('description[]')
+
         form = DocumentForm(user_company_id, user_company_branch, request.POST, instance=document)
         if form.is_valid():
             document = form.save(commit=False)
             document.updated_by = request.user
             document.save()
 
-            for index, transaction_item in enumerate(transactions):
-                account = Account.objects.get(
-                    company_id=user_company_id,
-                    company_branch=user_company_branch,
-                    accountID=request.POST.get(f'account_{index}')
-                )
+            Transaction.objects.filter(doc_id=document).delete()
 
-                customer = Person.objects.get(
-                    company_id=user_company_id,
-                    company_branch=user_company_branch,
-                    personsID=request.POST.get(f'customer_{index}')
-                )
+            try:
+                for account, customer, debit, credit, description in zip(account_list, customer_list, debit_list,
+                                                                         credit_list, description_list):
 
-                transaction_item.account = account
-                transaction_item.customer = customer
-                transaction_item.debit = request.POST.get(f'debit_{index}')
-                transaction_item.credit = request.POST.get(f'credit_{index}')
-                transaction_item.description = request.POST.get(f'description_{index}')
-                transaction_item.save()
+                    account = Account.objects.get(
+                        company_id=user_company_id,
+                        company_branch=user_company_branch,
+                        accountID=account
+                    )
+
+                    if customer:
+                        customer = Person.objects.get(
+                            company_id=user_company_id,
+                            company_branch=user_company_branch,
+                            personsID=customer
+                        )
+                    else:
+                        customer = None
+
+                    Transaction.objects.create(
+                        doc_id=document,
+                        account=account,
+                        customer=customer,
+                        company_id=user_company_id,
+                        company_branch=user_company_branch,
+                        debit=debit,
+                        credit=credit,
+                        date=datetime.now(),
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+            except Exception as e:
+                # Code to handle the exception
+                print(f"An error occurred: {e}")
 
             return redirect('transaction-list')
 
     else:
-        print(transactions)
-        print("TEST")
         form = DocumentForm(user_company_id, user_company_branch, instance=document)
-        print("TEST")
 
     return render(request, 'journal/update_transaction.html', {'form': form, 'context': context})
 

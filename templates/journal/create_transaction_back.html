@@ -6,11 +6,11 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Transactions</h1>
+            <h1>Journal</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item">Transactions</li>
+                    <li class="breadcrumb-item">Journal</li>
                     <li class="breadcrumb-item active">Create</li>
                 </ol>
             </nav>
@@ -22,7 +22,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Create Transaction</h5>
+                            <h5 class="card-title">Create Journal</h5>
 
                             <form method="post" action="{% url 'create-transaction' %}">
                                 {% csrf_token %}

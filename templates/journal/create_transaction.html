@@ -6,11 +6,11 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Transactions</h1>
+            <h1>Journal</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item">Transactions</li>
+                    <li class="breadcrumb-item">Journal</li>
                     <li class="breadcrumb-item active">Create</li>
                 </ol>
             </nav>
@@ -34,7 +34,7 @@
                                     <thead>
                                     <tr>
                                         <th>Account</th>
-                                        <th>Customer</th>
+                                        <th>Person</th>
                                         <th>Debit</th>
                                         <th>Credit</th>
                                         <th>Description</th>
@@ -48,6 +48,8 @@
 
                                 <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button>
                                 <button type="submit" class="btn btn-success">Submit</button>
+                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to
+                                List</a>
                             </form>
 
                         </div>
@@ -131,6 +133,7 @@
             input5.className = "form-control";
 
             // Set additional attributes for required fields
+            select1.required = true;
             input3.required = true;
             input4.required = true;
             input5.required = false;
@@ -146,21 +149,18 @@
             var customerOptions = JSON.parse('{{ context.customers|safe }}');
             var suppliersOptions = JSON.parse('{{ context.suppliers|safe }}');
 
-            console.log(accountOptions)
-            console.log(customerOptions)
+
+            var option = document.createElement("option");
+
+            option.value = '';
+            option.text = "Select an account.";
+            select1.appendChild(option);
 
             for (var i = 0; i < accountOptions.length; i++) {
-                var option = document.createElement("option");
+                option = document.createElement("option");
                 option.value = accountOptions[i].id;
                 option.text = accountOptions[i].name;
                 select1.appendChild(option);
-            }
-
-            for (var j = 0; j < customerOptions.length; j++) {
-                var option = document.createElement("option");
-                option.value = customerOptions[j].id;
-                option.text = customerOptions[j].name;
-                select2.appendChild(option);
             }
 
             // Add the oninput event to the debit field
@@ -178,6 +178,62 @@
             cell3.appendChild(input3);
             cell4.appendChild(input4);
             cell5.appendChild(input5);
+
+            var option = document.createElement("option");
+            option.value = '';
+            option.text = "Select a person";
+            select2.appendChild(option);
+
+            select1.addEventListener('change', function () {
+                // Clear existing options in select2
+                select2.innerHTML = "";
+                var option = document.createElement("option");
+                option.value = '';
+                option.text = "No option available";
+                select2.appendChild(option);
+                select2.required = false;
+
+
+                var selectedValue = this.value;
+                var firstThreeCharacters = selectedValue.substring(0, 3);
+
+
+                if (parseInt(firstThreeCharacters) === 212) {
+
+                    select2.innerHTML = "";
+                    var option = document.createElement("option");
+                    option.value = '';
+                    option.text = "Select a customer";
+                    select2.appendChild(option);
+
+                    for (var j = 0; j < customerOptions.length; j++) {
+
+                        option = document.createElement("option");
+                        option.value = customerOptions[j].id;
+                        option.text = customerOptions[j].name;
+                        select2.appendChild(option);
+                    }
+                    select2.required = true;
+                }
+
+                if (parseInt(firstThreeCharacters) === 112) {
+
+                    select2.innerHTML = "";
+                    var option = document.createElement("option");
+                    option.value = '';
+                    option.text = "Select a supplier";
+                    select2.appendChild(option);
+
+                    for (var k = 0; k < suppliersOptions.length; k++) {
+                        option = document.createElement("option");
+                        option.value = suppliersOptions[k].id;
+                        option.text = suppliersOptions[k].name;
+                        select2.appendChild(option);
+                    }
+                    select2.required = true;
+                }
+            });
+
 
             // Add a delete button
             var deleteButton = document.createElement("button");

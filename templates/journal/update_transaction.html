@@ -45,19 +45,40 @@
                                         <tr>
                                             <td>
                                                 <select name="account[]" class="form-control">
-                                                    {% for account in accounts %}
-                                                        <option value="{{ account.id }}"
-                                                                {% if account.id == item.account.id %}selected{% endif %}>{{ account.name }}</option>
+                                                    {% for account in context.accounts_selects %}
+                                                        <option value="{{ account.accountID }}"
+                                                                {% if account.accountID == item.account.id %}selected{% endif %}>{{ account.name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="customer[]" class="form-control">
-                                                    {% for customer in customers %}
-                                                        <option value="{{ customer.id }}"
-                                                                {% if customer.id == item.customer.id %}selected{% endif %}>{{ customer.name }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                                {% if item.customer.id in context.customers_selects %}
+                                                    <!-- Render select for customers -->
+                                                    <select name="customer[]" class="form-control">
+                                                        {% for customer in context.customers_selects %}
+                                                            <option value="{{ customer.personsID }}"
+                                                                    {% if customer.personsID == item.customer.id %}selected{% endif %}>
+                                                                {{ customer.name }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                {% elif item.account.id in context.suppliers_selects %}
+                                                    <!-- Render select for suppliers -->
+                                                    <select name="customer[]" class="form-control">
+                                                        {% for customer in context.suppliers_selects %}
+                                                            <option value="{{ customer.personsID }}"
+                                                                    {% if customer.personsID == item.customer.id %}selected{% endif %}>
+                                                                {{ customer.name }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                {% else %}
+                                                    <!-- Render a simple select option -->
+                                                    <select name="customer[]" class="form-control">
+                                                        <option value="">No option available</option>
+                                                    </select>
+                                                {% endif %}
+
                                             </td>
                                             <td><input type="text" name="debit[]" class="form-control"
                                                        value="{{ item.debit }}"></td>
@@ -77,6 +98,8 @@
 
                                 <button type="button" class="btn btn-primary" onclick="addRow()">Add Row</button>
                                 <button type="submit" class="btn btn-success">Update</button>
+                                <a href="{% url 'transaction-list' %}" class="btn btn-success bx-pull-right">Back to List</a>
+
                             </form>
                         </div>
                     </div>
@@ -103,8 +126,109 @@
                 autoclose: true,
             });
 
+            $('#array_form').submit(function () {
+                // Calculate totals
+                var totalDebit = 0;
+                var totalCredit = 0;
+
+                // Loop through each row in the table
+                $('#dynamic-table tbody tr').each(function () {
+                    var debitValue = parseFloat($(this).find('input[name="debit[]"]').val()) || 0;
+                    var creditValue = parseFloat($(this).find('input[name="credit[]"]').val()) || 0;
+
+                    // Update totals
+                    totalDebit += debitValue;
+                    totalCredit += creditValue;
+                });
+
+                // Compare totals and display message if they are not equal
+                if (totalDebit !== totalCredit) {
+                    alert("Debit and Credit totals must be equal.");
+                    return false;  // Prevent form submission
+                }
+
+                return true;  // Allow form submission
+            });
+
+            $('select[name="account[]"]').on('change', function () {
+                console.log($(this).val())
+                loadCustomerDropdown($(this));
+            });
+
+
             addRow();
         });
+
+        function removeRow(button) {
+
+            var result = confirm("Are you sure you want to delete?");
+
+            if (result) {
+                var row = button.closest('tr');
+                row.parentNode.removeChild(row);
+            }
+        }
+
+        function loadCustomerDropdown($this) {
+            // Load customer dropdown options based on the selected account
+            var selectedValue = $this.val();
+            var firstThreeCharacters = selectedValue.substring(0, 3);
+
+            // Find the nearest customer[] select element in the same row
+            var select2 = $this.closest('tr').find('select[name="customer[]"]');
+
+            console.log(firstThreeCharacters)
+
+            // Clear existing options
+            select2.empty();
+
+            // Add a default option
+            select2.append($('<option>', {
+                value: '',
+                text: 'No option available'
+            }));
+
+
+            // Determine customer options based on the selected account
+            if (parseInt(firstThreeCharacters) === 212) {
+                var customerOptions = JSON.parse('{{ context.customers|safe }}');
+
+                select2.empty();
+                select2.append($('<option>', {
+                    value: '',
+                    text: 'Select a customer'
+                }));
+
+                for (var j = 0; j < customerOptions.length; j++) {
+                    select2.append($('<option>', {
+                        value: customerOptions[j].id,
+                        text: customerOptions[j].name
+                    }));
+                }
+
+                select2.prop('required', true);
+
+            } else if (parseInt(firstThreeCharacters) === 112) {
+                var suppliersOptions = JSON.parse('{{ context.suppliers|safe }}');
+
+                select2.empty();
+                select2.append($('<option>', {
+                    value: '',
+                    text: 'Select a supplier'
+                }));
+
+                for (var j = 0; j < suppliersOptions.length; j++) {
+                    select2.append($('<option>', {
+                        value: suppliersOptions[j].id,
+                        text: suppliersOptions[j].name
+                    }));
+                }
+
+                select2.prop('required', true);
+            }
+
+        }
+
 
         function addRow() {
             var table = document.getElementById("dynamic-table").getElementsByTagName('tbody')[0];
@@ -133,6 +257,7 @@
             input5.className = "form-control";
 
             // Set additional attributes for required fields
+            select1.required = true;
             input3.required = true;
             input4.required = true;
             input5.required = false;
@@ -143,7 +268,24 @@
             input4.name = "credit[]";
             input5.name = "description[]";
 
-            // Add options to select elements (similar to create_transaction.html)
+
+            var accountOptions = JSON.parse('{{ context.accounts|safe }}');
+            var customerOptions = JSON.parse('{{ context.customers|safe }}');
+            var suppliersOptions = JSON.parse('{{ context.suppliers|safe }}');
+
+
+            var option = document.createElement("option");
+
+            option.value = '';
+            option.text = "Select an account.";
+            select1.appendChild(option);
+
+            for (var i = 0; i < accountOptions.length; i++) {
+                option = document.createElement("option");
+                option.value = accountOptions[i].id;
+                option.text = accountOptions[i].name;
+                select1.appendChild(option);
+            }
 
             // Add the oninput event to the debit field
             input3.oninput = function () {
@@ -161,6 +303,62 @@
             cell4.appendChild(input4);
             cell5.appendChild(input5);
 
+            var option = document.createElement("option");
+            option.value = '';
+            option.text = "Select a person";
+            select2.appendChild(option);
+
+            select1.addEventListener('change', function () {
+                // Clear existing options in select2
+                select2.innerHTML = "";
+                var option = document.createElement("option");
+                option.value = '';
+                option.text = "No option available";
+                select2.appendChild(option);
+                select2.required = false;
+
+
+                var selectedValue = this.value;
+                var firstThreeCharacters = selectedValue.substring(0, 3);
+
+
+                if (parseInt(firstThreeCharacters) === 212) {
+
+                    select2.innerHTML = "";
+                    var option = document.createElement("option");
+                    option.value = '';
+                    option.text = "Select a customer";
+                    select2.appendChild(option);
+
+                    for (var j = 0; j < customerOptions.length; j++) {
+
+                        option = document.createElement("option");
+                        option.value = customerOptions[j].id;
+                        option.text = customerOptions[j].name;
+                        select2.appendChild(option);
+                    }
+                    select2.required = true;
+                }
+
+                if (parseInt(firstThreeCharacters) === 112) {
+
+                    select2.innerHTML = "";
+                    var option = document.createElement("option");
+                    option.value = '';
+                    option.text = "Select a supplier";
+                    select2.appendChild(option);
+
+                    for (var k = 0; k < suppliersOptions.length; k++) {
+                        option = document.createElement("option");
+                        option.value = suppliersOptions[k].id;
+                        option.text = suppliersOptions[k].name;
+                        select2.appendChild(option);
+                    }
+                    select2.required = true;
+                }
+            });
+
+
             // Add a delete button
             var deleteButton = document.createElement("button");
             deleteButton.innerHTML = "Delete";
@@ -171,11 +369,6 @@
                 row.parentNode.removeChild(row); // Remove the row
             };
             cell6.appendChild(deleteButton);
-        }
-
-        function removeRow(button) {
-            var row = button.closest('tr'); // Get the parent row
-            row.parentNode.removeChild(row); // Remove the row
         }
     </script>
 {% endblock %}
