@@ -11,8 +11,8 @@ from apps.persons.models import Person
 class InventoryTransactionForm(forms.ModelForm):
     class Meta:
         model = InventoryTransaction
-        fields = ['doc_id', 'inventory', 'customer', 'unit', 'price', 'total_price', 'discount', 'expense_type',
-                  'vehicle', 'note', 'date']
+        fields = ['date', 'note', 'inventory', 'supplier', 'unit', 'price', 'discount', 'expense_type',
+                  'vehicle']
 
     def __init__(self, user_company_id, user_company_branch, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,27 +26,29 @@ class InventoryTransactionForm(forms.ModelForm):
         # Add more fields as needed
 
         # Reduce the size of 'note' field
-        self.fields['note'].widget.attrs['cols'] = 3  # Adjust the width as needed
-        self.fields['note'].widget.attrs['rows'] = 4  # Adjust the height as needed
+        self.fields['note'].widget.attrs['cols'] = 2  # Adjust the width as needed
+        self.fields['note'].widget.attrs['rows'] = 3  # Adjust the height as needed
 
-        # Populate choices for accountID from the database
-        document = Document.objects.filter(
-            company_id=user_company_id,
-            company_branch=user_company_branch
-        )
-        self.fields['doc_id'].queryset = document
-
-        customers = Person.objects.filter(
-            person_type="customer",
+        suppliers = Person.objects.filter(
+            person_type="supplier",
             active="yes",
             company_id=user_company_id,
             company_branch=user_company_branch
         )
 
-        self.fields['customer'].queryset = customers
+        self.fields['supplier'].queryset = suppliers
 
         inventory = Inventory.objects.filter(
             company_id=user_company_id,
             company_branch=user_company_branch
         )
+
         self.fields['inventory'].queryset = inventory
+
+        account = Account.objects.filter(
+            company_id=user_company_id,
+            company_branch=user_company_branch
+        )
+
+        self.fields['expense_type'].queryset = account
+        self.fields['vehicle'].queryset = account

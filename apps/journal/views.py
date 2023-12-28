@@ -142,9 +142,6 @@ def update_transaction(request, doc_id):
         doc_id=doc_id
     )
 
-    print(doc_id)
-    print(document.doc_id)
-
     accounts = Account.objects.filter(
         company_id=user_company_id,
         company_branch=user_company_branch
