@@ -8,7 +8,7 @@ from apps.persons.models import Person  # Assuming your persons model is in the 
 class InventoryForm(forms.ModelForm):
     class Meta:
         model = Inventory
-        fields = ['account', 'measure', 'inventory_item_name', 'inventory_type', 'avg_price', 'detail',
+        fields = ['account', 'measure', 'inventory_item_name', 'inventory_type', 'detail',
                   'note']
 
     def __init__(self, user_company_id, user_company_branch, *args, **kwargs):
@@ -19,7 +19,7 @@ class InventoryForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
         # Add specific Bootstrap classes or customization for certain fields
-        self.fields['avg_price'].widget.attrs['class'] = 'form-control'  # Example for avg_price field
+        # self.fields['avg_price'].widget.attrs['class'] = 'form-control'  # Example for avg_price field
 
         # Filter choices for supplierID based on criteria (person_type, company_id, company_branch)
         suppliers = Person.objects.filter(
@@ -32,10 +32,10 @@ class InventoryForm(forms.ModelForm):
         # self.fields['supplierID'].queryset = suppliers
 
         # Reduce the size of 'details' and 'note' fields
-        self.fields['detail'].widget.attrs['cols'] = 3  # Adjust the width as needed
-        self.fields['detail'].widget.attrs['rows'] = 4  # Adjust the width as needed
-        self.fields['note'].widget.attrs['cols'] = 3  # Adjust the width as needed
-        self.fields['note'].widget.attrs['rows'] = 4  # Adjust the width as needed
+        self.fields['detail'].widget.attrs['cols'] = 2  # Adjust the width as needed
+        self.fields['detail'].widget.attrs['rows'] = 3  # Adjust the width as needed
+        self.fields['note'].widget.attrs['cols'] = 2  # Adjust the width as needed
+        self.fields['note'].widget.attrs['rows'] = 3  # Adjust the width as needed
 
     # def clean_supplierID(self):
     #     # Optional: You can add additional validation for the supplierID field if needed
@@ -47,7 +47,7 @@ class InventoryForm(forms.ModelForm):
 class InventoryFormEdit(forms.ModelForm):
     class Meta:
         model = Inventory
-        fields = ['account', 'measure', 'inventory_item_name', 'inventory_type', 'avg_price', 'detail',
+        fields = ['account', 'measure', 'inventory_item_name', 'inventory_type', 'detail',
                   'note']
 
     def __init__(self, user_company_id, user_company_branch, *args, **kwargs):
@@ -58,7 +58,7 @@ class InventoryFormEdit(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
         # Add specific Bootstrap classes or customization for certain fields
-        self.fields['avg_price'].widget.attrs['class'] = 'form-control'  # Example for avg_price field
+        # self.fields['avg_price'].widget.attrs['class'] = 'form-control'  # Example for avg_price field
 
         # Filter choices for supplierID based on criteria (person_type, company_id, company_branch)
         suppliers = Person.objects.filter(

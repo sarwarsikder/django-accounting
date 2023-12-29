@@ -40,6 +40,7 @@ def create_asset(request):
             user = request.user
 
             fixed_asset_instance = form.save(commit=False)
+            fixed_asset_instance.depreciation_id = request.POST['accu_id'] + '' + request.POST['depreciation_id']
             fixed_asset_instance.company_id = user_company_id
             fixed_asset_instance.company_branch = user_company_branch
             fixed_asset_instance.created_by_id = user.id
@@ -73,6 +74,7 @@ def update_asset(request, depreciation_id):
             form = form.save(commit=False)
             form.company_id = user.company
             form.company_branch = user.company_branch
+            form.depreciation_id = request.POST['accu_id'] + '' + request.POST['depreciation_id']
             form.account = cleaned_data['account']
             form.accu_id = cleaned_data['accu_id']
             form.save()

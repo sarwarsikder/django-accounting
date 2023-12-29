@@ -26,6 +26,7 @@ class Inventory(models.Model):
     inventory_type = models.CharField(max_length=255)
     measure = models.ForeignKey(Measures, on_delete=models.CASCADE)
     avg_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    avg_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     detail = models.TextField()
     note = models.TextField()
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, default=None)

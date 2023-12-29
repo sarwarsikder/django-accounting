@@ -7,11 +7,15 @@ from apps.fixed_assets.models import FixedAsset, DepreciationCategory
 class FixedAssetForm(forms.ModelForm):
     class Meta:
         model = FixedAsset
-        fields = ['account', 'accu_id', 'name', 'type', 'brand', 'price',
+        fields = ['depreciation_id', 'account', 'accu_id', 'name', 'type', 'brand', 'price',
                   'purchase_month', 'depreciation', 'identification', 'details', 'notes']
 
         widgets = {
             'purchase_month': forms.DateInput(attrs={'class': 'form-control datepicker'}),
+        }
+
+        labels = {
+            'accu_id': 'Depreciation Category Id',
         }
 
     def __init__(self, user_company_id, user_company_branch, *args, **kwargs):
@@ -36,6 +40,8 @@ class FixedAssetForm(forms.ModelForm):
         self.fields['price'].widget.attrs['class'] = 'form-control'
         self.fields['depreciation'].widget.attrs['class'] = 'form-control'
         self.fields['purchase_month'].widget.attrs['class'] = 'form-control datepicker'
+
+        self.fields['depreciation'].initial = 'No'
 
         # Reduce the size of 'details' and 'note' fields
         self.fields['details'].widget.attrs['cols'] = 3  # Adjust the width as needed

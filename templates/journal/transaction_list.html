@@ -33,9 +33,8 @@
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Notes</th>
                                     <th>Date</th>
+                                    <th>Notes</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -43,9 +42,8 @@
                                 {% for document in context.documents %}
                                     <tr>
                                         <td>{{ document.doc_id }}</td>
-                                        <td>{{ document.name|default:"" }}</td>
-                                        <td>{{ document.notes }}</td>
                                         <td>{{ document.date }}</td>
+                                        <td>{{ document.notes }}</td>
                                         <td>
                                             <!-- Add links or buttons for actions -->
                                             <a class="btn btn-primary"
