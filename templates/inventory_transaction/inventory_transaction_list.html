@@ -88,7 +88,7 @@
                                                href="{% url 'inventory-transaction-update' transaction.inv_transID context.type_of_transaction %}">Edit</a>
                                             |
                                             <a class="btn btn-danger"
-                                               href="{% url 'inventory-transaction-delete' transaction.inv_transID %}">Delete</a>
+                                               href="{% url 'inventory-transaction-delete' transaction.inv_transID context.type_of_transaction %}">Delete</a>
                                         </td>
                                     </tr>
                                 {% endfor %}

@@ -27,7 +27,7 @@ class Transaction(models.Model):
     # Fields
     transaction_id = models.AutoField(primary_key=True)
     doc_id = models.ForeignKey(Document, on_delete=models.CASCADE)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     customer = models.ForeignKey(Person, on_delete=models.CASCADE, null=True, blank=True)
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     company_branch = models.ForeignKey(CompanyBranch, on_delete=models.CASCADE, null=True)

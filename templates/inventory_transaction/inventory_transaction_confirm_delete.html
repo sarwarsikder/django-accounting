@@ -28,10 +28,9 @@
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <button class="btn btn-danger" type="submit">Yes, delete</button>
-                                <a class="btn btn-success" href="{% url 'inventory-transaction-list' %}">Cancel</a>
+                                <a class="btn btn-success"
+                                   href="{% url 'inventory-transaction-list'  type_of_transaction=type_of_transaction %}">Cancel</a>
                             </form>
-                            <!-- End Table with stripped rows -->
-
                         </div>
                     </div>
 
