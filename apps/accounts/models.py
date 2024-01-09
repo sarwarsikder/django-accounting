@@ -42,9 +42,9 @@ class AccountLevel3(models.Model):
 class Account(models.Model):
     # accountID = models.IntegerField(primary_key=True, choices=[(i, str(i)) for i in range(1000)])
     accountID = models.CharField(primary_key=True, max_length=10)
-    level3ID = models.ForeignKey(AccountLevel3, on_delete=models.CASCADE, null=True, default=None)
-    level2ID = models.ForeignKey(AccountLevel2, on_delete=models.CASCADE, null=True, default=None)
     level1ID = models.ForeignKey(AccountLevel1, on_delete=models.CASCADE, null=True, default=None)
+    level2ID = models.ForeignKey(AccountLevel2, on_delete=models.CASCADE, null=True, default=None)
+    level3ID = models.ForeignKey(AccountLevel3, on_delete=models.CASCADE, null=True, default=None)
     account_code = models.CharField(max_length=3, null=True)
     name = models.CharField(max_length=255)
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE, default=None, related_name='created_accounts')
